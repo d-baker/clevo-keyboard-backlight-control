@@ -1,0 +1,19 @@
+#! /bin/bash
+set -o nounset
+
+rootdir="/home/dbaker/bin/kb-utility"
+batterylevel=$(acpi -V | awk '/Discharging/ { print ($4 + 0) }')
+
+if [ $batterylevel -le 10 ]
+then
+    # Turn keyboard on and make it critical battery-colored
+    cat "$rootdir/kb-on.txt" "$rootdir/criticalbat.txt" | sudo tee /etc/modprobe.d/clevo-xsm-wmi.conf > /dev/null
+    sudo modprobe -r clevo_xsm_wmi
+    sudo modprobe clevo_xsm_wmi
+elif [ $batterylevel -le 20 ]
+then
+    # Turn keyboard on and make it low battery-colored
+    cat "$rootdir/kb-on.txt" "$rootdir/lowbat.txt" | sudo tee /etc/modprobe.d/clevo-xsm-wmi.conf > /dev/null
+    sudo modprobe -r clevo_xsm_wmi
+    sudo modprobe clevo_xsm_wmi
+fi

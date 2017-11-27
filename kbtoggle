@@ -1,4 +1,5 @@
 #! /bin/bash
+set -o nounset
 
 grep -q "kb_off=1" /etc/modprobe.d/clevo-xsm-wmi.conf
 backlight_off=$? # Is the backlight off or on?
