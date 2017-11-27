@@ -1,7 +1,7 @@
 What is this?
 =============
 
-A front-end for [clevo-xsm-wmi](https://bitbucket.org/tuxedocomputers/clevo-xsm-wmi), the kernel module for controlling the backlight on Clevo laptops. In simpler terms, it lets you switch the backlight on and off, and set the colors on RGB keyboards. I created this on an Ubuntu-based Linux distro and can't guarantee it will work on other distros.
+A command-line frontend for [clevo-xsm-wmi](https://bitbucket.org/tuxedocomputers/clevo-xsm-wmi), the kernel module for controlling the backlight on Clevo laptops. In simpler terms, it lets you switch the backlight on and off, and set the colors on RGB keyboards. I created this on an Ubuntu-based Linux distro and can't guarantee it will work on other distros.
 
 Dependencies
 ============
@@ -58,3 +58,4 @@ You can create your own colorschemes easily - just duplicate one of the existing
 TODO
 ====
 - Add an option to randomly generate a colorscheme when running `kbtoggle` with an appropriate parameter.
+- Any improvements to this hastily hacked-together code are welcomed.
