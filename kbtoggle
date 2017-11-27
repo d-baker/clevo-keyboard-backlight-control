@@ -1,0 +1,51 @@
+#! /bin/bash
+
+grep -q "kb_off=1" /etc/modprobe.d/clevo-xsm-wmi.conf
+backlight_off=$? # Is the backlight off or on?
+rootdir="/home/dbaker/bin/kb-utility"
+tdir="$rootdir/kb-templates" # template folder
+
+if [ ! -f "$rootdir/state.txt" ]
+then
+    > state.txt
+fi
+
+if [ $# -eq 0 ]
+  then
+    echo "No arguments supplied, acting as a backlight toggle"
+   
+   # Toggle backlight
+   if [ $backlight_off -eq 0 ]
+    then
+        echo "Turning on keyboard backlight..."
+        # Concatenate color state with ON code
+        cat "$rootdir/kb-on.txt" "$rootdir/state.txt" | sudo tee /etc/modprobe.d/clevo-xsm-wmi.conf > /dev/null
+        sudo modprobe -r clevo_xsm_wmi
+        sudo modprobe clevo_xsm_wmi
+        echo "Keyboard backlight turned on"
+    else
+        echo "Turning off keyboard backlight..."
+        cat "$rootdir/kb-off.txt" | sudo tee /etc/modprobe.d/clevo-xsm-wmi.conf > /dev/null
+        sudo modprobe -r clevo_xsm_wmi
+        sudo modprobe clevo_xsm_wmi
+        echo "Keyboard backlight turned off"
+    fi
+
+else
+    # Check if requested colorscheme file exists
+    if [ -f "$tdir/$1.txt" ]
+    then
+        echo "Changing colors..."
+	# TODO writing colors to state file isnt working
+        cat "$tdir/$1.txt" > "$rootdir/state.txt" # Overwrite state file with chosen color scheme
+        echo "Turning on keyboard backlight..."
+        # Concatenate color state with ON code
+        cat "$rootdir/kb-on.txt" "$rootdir/state.txt" | sudo tee /etc/modprobe.d/clevo-xsm-wmi.conf > /dev/null
+        sudo modprobe -r clevo_xsm_wmi
+        sudo modprobe clevo_xsm_wmi
+        echo "Keyboard backlight turned on, color changed and state saved"
+    else
+        echo "Sorry, that colorscheme doesn't exist. Try again"
+        exit
+    fi
+fi
