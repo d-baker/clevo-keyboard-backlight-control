@@ -49,7 +49,7 @@ Usage
 - To change the colorscheme of the keyboard, from a terminal run `kbtoggle <colorscheme>` where `<colorscheme>` is the name of one the files in `kb-templates` without the `.txt` file extension.
 - To make the keyboard change color when the battery is low (20%) or critical (10%), run `crontab -e`, add the following line (where `<pathtoscript>` is the full path to this utility on your system) and save:
 ```
-2 * * * * <pathtoscript>/batterymon
+*/2 * * * * cd /home/dbaker/bin/kb-utility && ./batterymon >> batterymon.log
 ```
 This will check your battery level every 2 minutes, and run a script to change the color of the keyboard if it's low.
 
