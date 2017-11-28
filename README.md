@@ -27,6 +27,7 @@ Installation
 chmod +x kbtoggle
 chmod +x batterymon
 ```
+3. In order to run the `batterymon` script through cron, you need to have it in your `root` path since it has to be added to `root`s cron table. So, edit `/etc/environment` as root and append the path to the script.
 
 
 ## Turning off the password check
@@ -75,5 +76,4 @@ TODO
 ====
 - Add an option to randomly generate a colorscheme when running `kbtoggle` with an appropriate parameter.
 - Prevent `batterymon` from insisting on switching the backlight on if you want it off.
-- Make `batterymon` actually run from cron properly :'(
 - Any improvements to this hastily hacked-together code are welcomed.
