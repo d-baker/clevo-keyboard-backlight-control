@@ -37,7 +37,6 @@ else
     if [ -f "$tdir/$1.txt" ]
     then
         echo "Changing colors..."
-	# TODO writing colors to state file isnt working
         cat "$tdir/$1.txt" > "$rootdir/state.txt" # Overwrite state file with chosen color scheme
         echo "Turning on keyboard backlight..."
         # Concatenate color state with ON code

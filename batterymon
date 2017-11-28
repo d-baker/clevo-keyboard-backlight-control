@@ -3,17 +3,33 @@ set -o nounset
 
 rootdir="/home/dbaker/bin/kb-utility"
 batterylevel=$(acpi -V | awk '/Discharging/ { print ($4 + 0) }')
+acpi -V | grep -q "Discharging"
+discharging=$?
 
-if [ $batterylevel -le 10 ]
+# Grep command will exit with zero if it finds "discharging"
+# So this is saying...if battery is discharging (running on battery power),
+# check the battery level and set colors accordingly, otherwise load saved state
+
+if [ $discharging -eq 0 ] 
 then
-    # Turn keyboard on and make it critical battery-colored
-    cat "$rootdir/kb-on.txt" "$rootdir/criticalbat.txt" | sudo tee /etc/modprobe.d/clevo-xsm-wmi.conf > /dev/null
-    sudo modprobe -r clevo_xsm_wmi
-    sudo modprobe clevo_xsm_wmi
-elif [ $batterylevel -le 20 ]
-then
-    # Turn keyboard on and make it low battery-colored
-    cat "$rootdir/kb-on.txt" "$rootdir/lowbat.txt" | sudo tee /etc/modprobe.d/clevo-xsm-wmi.conf > /dev/null
+
+    if [ $batterylevel -le 10 ]
+    then
+        # Turn keyboard on and make it critical battery-colored
+        cat "$rootdir/kb-on.txt" "$rootdir/criticalbat.txt" | sudo tee /etc/modprobe.d/clevo-xsm-wmi.conf > /dev/null
+        sudo modprobe -r clevo_xsm_wmi
+        sudo modprobe clevo_xsm_wmi
+    elif [[ $batterylevel -le 20 ]]
+    then
+        # Turn keyboard on and make it low battery-colored
+        cat "$rootdir/kb-on.txt" "$rootdir/lowbat.txt" | sudo tee /etc/modprobe.d/clevo-xsm-wmi.conf > /dev/null
+        sudo modprobe -r clevo_xsm_wmi
+        sudo modprobe clevo_xsm_wmi
+    fi
+
+else
+    # Load saved color state
+    cat "$rootdir/state.txt" | sudo tee /etc/modprobe.d/clevo-xsm-wmi.conf > /dev/null
     sudo modprobe -r clevo_xsm_wmi
     sudo modprobe clevo_xsm_wmi
 fi

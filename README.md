@@ -16,17 +16,27 @@ Dependencies
 		sudo tee /etc/modules-load.d/clevo-xsm-wmi.conf <<< clevo-xsm-wmi
 		```
 - `gksudo` (or `kdesudo` for KDE) if you want to use a keyboard shortcut to run the script. Install with `sudo apt install gksu` or `sudo apt install kdesudo`. This is probably already installed.
+- `acpi` for the battery monitor: `sudo apt install acpi`
 
 Installation
 =====
-Download and unzip, or clone, this repo, then add the script to your path by adding the following line to `~/.bashrc`:
+1. Download and unzip, or clone, this repo, then add the script to your path by adding the following line to `~/.bashrc`:
 `export PATH=$PATH:<dir>` where `<dir>` is the full path to the repo. For example if you downloaded it to your desktop, it would look like `export PATH=$PATH:~/Desktop/clevo-keyboard-backlight-control`.
+2. `cd` into the clevo-keyboard-backlight-control directory and make the scripts executable:
+```
+chmod +x kbtoggle
+chmod +x batterymon
+```
+
 
 ## Turning off the password check
 This utility needs to unload and reload the keyboard kernel module in order to update its configuration without a reboot. Therefore, it requires root privileges, so when you run it from the command line, it will ask for your password.
 This gets annoying, but you can easily disable it:
 1. `sudo visudo`, this will open the `/etc/sudoers` file in your terminal
-2. Add the following line to the end of the file: `username ALL=(ALL) NOPASSWD: <pathtoscript>/kbtoggle` (replace `<pathtoscript>` with the path to the kbtoggle script on your system)
+2. Add the following lines to the end of the file, where `<pathtoscript>` is the full path to this utility on your system:
+```
+username ALL=(ALL) NOPASSWD: <pathtoscript>/kbtoggle,<pathtoscript>/batterymon
+```
 3. Save and close the file
 
 Usage
@@ -37,6 +47,12 @@ Usage
 	2. Specify the command as `gksudo <pathtoscript>/kbtoggle`. Replace `gksudo` with `kdesudo` if using KDE. 
 	3. Using `gksudo` or `kdesudo` will pop up a graphical interface to ask for your password when you hit your chosen keyboard shortcut. I haven't found a way to make these respect the sudoers file yet, so you'll have to give you password every time.
 - To change the colorscheme of the keyboard, from a terminal run `kbtoggle <colorscheme>` where `<colorscheme>` is the name of one the files in `kb-templates` without the `.txt` file extension.
+- To make the keyboard change color when the battery is low (20%) or critical (10%), run `crontab -e`, add the following line (where `<pathtoscript>` is the full path to this utility on your system) and save:
+```
+2 * * * * <pathtoscript>/batterymon
+```
+This will check your battery level every 2 minutes, and run a script to change the color of the keyboard if it's low.
+
 
 Advanced usage
 ==============
