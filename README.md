@@ -47,7 +47,7 @@ Usage
 	2. Specify the command as `gksudo <pathtoscript>/kbtoggle`. Replace `gksudo` with `kdesudo` if using KDE. 
 	3. Using `gksudo` or `kdesudo` will pop up a graphical interface to ask for your password when you hit your chosen keyboard shortcut. I haven't found a way to make these respect the sudoers file yet, so you'll have to give you password every time.
 - To change the colorscheme of the keyboard, from a terminal run `kbtoggle <colorscheme>` where `<colorscheme>` is the name of one the files in `kb-templates` without the `.txt` file extension.
-- To make the keyboard change color when the battery is low (20%) or critical (10%), run `crontab -e`, add the following line (where `<pathtoscript>` is the full path to this utility on your system) and save:
+- To make the keyboard change color when the battery is low (20%) or critical (10%), run `sudo crontab -e`, add the following line (where `<pathtoscript>` is the full path to this utility on your system) and save:
 ```
 */2 * * * * cd <pathtoscript> && ./batterymon >> batterymon.log
 ```
