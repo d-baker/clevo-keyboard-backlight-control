@@ -74,4 +74,5 @@ You can create your own colorschemes easily - just duplicate one of the existing
 TODO
 ====
 - Add an option to randomly generate a colorscheme when running `kbtoggle` with an appropriate parameter.
+- Prevent `batterymon` from insisting on switching the backlight on if you want it off.
 - Any improvements to this hastily hacked-together code are welcomed.
