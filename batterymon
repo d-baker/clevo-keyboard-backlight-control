@@ -63,37 +63,41 @@ else
     state_on=$OFF
 fi
 
+state_charging=$CHARGING
+state_level=$LEVEL_CRITICAL
+
 printf "> Checking whether the keyboard is on...\n\n"
 # Only turn on the keyboard if we already have it set to on
-if [[ state_on -eq $ON ]]; then
+if [[ $state_on -eq $ON ]]; then
 
-    if [[ state_charging -eq $DISCHARGING ]]; then
+    if [[ $state_charging -eq $DISCHARGING ]]; then
         printf "Battery is discharging. "
 
-        if [[ state_level -eq $LEVEL_LOW ]]; then
+        if [[ $state_level -eq $LEVEL_LOW ]]; then
             echo "Battery level is low."
             # Make keyboard low battery-colored
             cat "$rootdir/kb-on.txt" "$rootdir/lowbat.txt" | sudo tee /etc/modprobe.d/clevo-xsm-wmi.conf > /dev/null
             sudo modprobe -r clevo_xsm_wmi
             sudo modprobe clevo_xsm_wmi
 
-        elif [[ state_level -eq $LEVEL_CRITICAL ]]; then
+        elif [[ $state_level -eq $LEVEL_CRITICAL ]]; then
             echo "Battery level is critical."
             # Make keyboard critical battery-colored
             cat "$rootdir/kb-on.txt" "$rootdir/criticalbat.txt" | sudo tee /etc/modprobe.d/clevo-xsm-wmi.conf > /dev/null
             sudo modprobe -r clevo_xsm_wmi
             sudo modprobe clevo_xsm_wmi
         fi
-    
+    else
+       printf "Battery charging. " 
     fi
 
-    if [[ state_level -eq $LEVEL_NORMAL ]]; then
+    if [[ $state_level -eq $LEVEL_NORMAL ]] || [[ $state_charging -eq $CHARGING ]]; then
         echo "Battery level is normal."
 
         # Check if the state in kernel and state in state file differ
         if [ -z $(diff "state.txt" "/etc/modprobe.d/clevo-xsm-wmi.conf") ]; then
             # No diff - keyboard colorscheme is up to date with saved state
-            echo "Keyboard color is up to date"
+            printf "\nKeyboard color is up to date\n"
         else
             # Keyboard needs updating to match saved state
             printf "\nReturning keyboard to its saved color state\n"
@@ -107,5 +111,5 @@ if [[ state_on -eq $ON ]]; then
 
     fi
 else
-    echo "Keyboard backlight off. Not changing anything"
+    echo "Keyboard backlight off, not doing anything"
 fi
