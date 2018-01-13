@@ -2,7 +2,6 @@
 set -o nounset
 
 rootdir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-tdir="$rootdir/kb-templates" # template folder
 
 grep -q "kb_off=1" /etc/modprobe.d/clevo-xsm-wmi.conf
 backlight_off=$? # Is the backlight off or on?

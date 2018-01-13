@@ -2,7 +2,7 @@
 set -o nounset
 
 rootdir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-tdir="$rootdir/kb-templates" # template folder
+tdir="$rootdir/colorschemes" # template folder
 
 # Array search function
 containsElement () {
