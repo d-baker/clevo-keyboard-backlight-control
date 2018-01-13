@@ -26,6 +26,7 @@ showOptions () {
     printf "  kbsetcolor <colorscheme>    Apply an existing colorscheme\n"
     printf "  kbsetcolor -n    Create a new colorscheme\n"
     printf "  kbsetcolor -d <colorscheme>    Set a default colorscheme\n"
+    printf "  kbsetcolor -l    List available colorschemes\n"
     printf "  kbsetcolor -h    View this help screen\n"
 }
 
