@@ -80,5 +80,7 @@ You can create your own colorschemes using the `kbsetcolor -n` command. Alternat
 
 TODO
 ====
+- Rename `kb-templates` to `colorschemes`
+- Move assorted config files (`criticalbat, lowbat, kb-off, kb-on`) into their own directory
 - Add an option to randomly generate a colorscheme when running `kbsetcolor` with an appropriate parameter.(currently a WIP)
 - Any improvements to this hastily hacked-together code are welcomed.
