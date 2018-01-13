@@ -42,12 +42,14 @@ applyColorscheme () {
         sudo modprobe -r clevo_xsm_wmi
         sudo modprobe clevo_xsm_wmi
         printf "\nKeyboard backlight turned on, color changed and state saved\n"
+        exit 0
     else
         printf "Sorry, that colorscheme doesn't exist. Try one of these:\n\n"
         for template in $tdir/*; do
             stripped=${template%.*}
             echo ${stripped##*/}
         done
+        exit 2
     fi
 }
 
@@ -108,7 +110,7 @@ while getopts ":hnd:" opt; do
             else
                 printf "\nNew colorscheme created, but not applied. You can apply it later using:\nkbsetcolor $colorscheme_name\n"
             fi
-            exit
+            exit 0
             ;;
         d)  # Set a default colorscheme
             if [ -f "$tdir/${OPTARG}.txt" ]; then
@@ -123,15 +125,15 @@ while getopts ":hnd:" opt; do
                     echo ${stripped##*/}
                 done
             fi
-            exit
+            exit 0
             ;;
         h)  # Show help
             showOptions
-            exit
+            exit 0
             ;;
         *)  # On getopts error...
             showOptions
-            exit
+            exit 2
             ;;
     esac
 done
@@ -140,6 +142,7 @@ done
 if [ $# -eq 0 ]
 then
     showOptions
+    exit 2
 else
     # Argument (that isn't an option) supplied? Try and use it
     applyColorscheme $1
