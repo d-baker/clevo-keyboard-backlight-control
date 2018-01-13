@@ -17,24 +17,20 @@ showOptions () {
 
 
 # Create state file if it doesn't exist (will be empty initially)
-if [ ! -f "$rootdir/state.txt" ]
-then
+if [ ! -f "$rootdir/state.txt" ]; then
     > state.txt
 fi
 
-if [ $# -eq 0 ]
-  then
+if [ $# -eq 0 ]; then
     printf "Toggling backlight\n\n"
 
    # Toggle backlight
-   if [ $backlight_off -eq 0 ]
-    then
+   if [ $backlight_off -eq 0 ]; then
         echo "> Turning on keyboard backlight..."
         # Concatenate color state with ON code
         # Use a default if no existing state
 
-        if [ ! -s "$rootdir/state.txt" ]
-        then
+        if [ ! -s "$rootdir/state.txt" ]; then
             echo "No existing state, falling back to default."
             cat "$rootdir/kb-on.txt" "$default" | sudo tee /etc/modprobe.d/clevo-xsm-wmi.conf > /dev/null
         else

@@ -1,7 +1,6 @@
 #! /bin/bash
 set -o nounset
 
-
 rootdir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 tdir="$rootdir/kb-templates" # template folder
 
@@ -15,8 +14,7 @@ containsElement () {
 
 # Check if new colorscheme is a solid color
 solidColor () {
-    if [ "$1" == "$2" -a "$2" == "$3" ];
-    then
+    if [ "$1" == "$2" -a "$2" == "$3" ]; then
         return 0
     fi
     return 1
@@ -41,8 +39,7 @@ errorNoColorscheme() {
 
 applyColorscheme () {
     # Check if requested colorscheme file exists
-    if [ -f "$tdir/$1.txt" ]
-    then
+    if [ -f "$tdir/$1.txt" ]; then
         printf "> Changing colors...\n"
         cat "$tdir/$1.txt" > "$rootdir/state.txt" # Overwrite state file with chosen color scheme
         echo "> Turning on keyboard backlight..."
@@ -57,6 +54,10 @@ applyColorscheme () {
     fi
 }
 
+
+
+
+
 # Process options
 while getopts ":hnd:" opt; do
     case $opt in
@@ -67,8 +68,7 @@ while getopts ":hnd:" opt; do
             declare -A colors
             colors=(['r']='red' ['b']='blue' ['y']='yellow' ['m']='magenta' ['c']='cyan' ['g']='green' ['w']='white')
             
-            for color in "${!colors[@]}"
-            do
+            for color in "${!colors[@]}"; do
                 echo "$color) ${colors[$color]}"
             done
             
@@ -149,8 +149,7 @@ while getopts ":hnd:" opt; do
 done
 
 # Apply existing colorscheme or exit with help menu
-if [ $# -eq 0 ]
-then
+if [ $# -eq 0 ]; then
     showOptions
     exit 2
 else
