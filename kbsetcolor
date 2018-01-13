@@ -1,0 +1,45 @@
+#! /bin/bash
+set -o nounset
+
+# Array search function
+containsElement () {
+  local e match="$1"
+  shift
+  for e; do [[ "$e" == "$match" ]] && return 0; done
+  return 1
+}
+
+# Process options
+while getopts "d:" opt; do
+    case $opt in
+        d)
+            printf "Setting default colorscheme to ${OPTARG}\n"
+    esac
+done
+
+if [ $# -eq 0 ]
+  then
+    printf "> Creating new colorscheme...\n"
+    printf "Available colors:\n"
+    
+    declare -A colors
+    colors=(['r']='red' ['b']='blue' ['y']='yellow' ['m']='magenta' ['c']='cyan' ['g']='green' ['w']='white')
+    
+    for color in "${!colors[@]}"
+    do
+        echo "$color) ${colors[$color]}"
+    done
+    
+    read -p "Select color for keyboard section 1: " color1
+    while ! containsElement $color1 ${!colors[@]}; do
+        echo "Invalid option, try again"
+        read -p "Select color for keyboard section 1: " color1
+    done
+    echo "Using $color1 for first section"
+    
+    read -p "Select color for keyboard section 2: " color2
+    echo "Using $color2 for second section"
+    
+    read -p "Select color for keyboard section 3: " color3
+    echo "Using $color3 for third section"
+fi
