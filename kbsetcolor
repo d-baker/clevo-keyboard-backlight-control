@@ -1,6 +1,10 @@
 #! /bin/bash
 set -o nounset
 
+
+rootdir="/home/dbaker/bin/kb-utility" # TODO fix this
+tdir="$rootdir/kb-templates" # template folder
+
 # Array search function
 containsElement () {
   local e match="$1"
@@ -13,7 +17,11 @@ containsElement () {
 while getopts "d:" opt; do
     case $opt in
         d)
-            printf "Setting default colorscheme to ${OPTARG}\n"
+            # TODO check if optarg is in the templates folder
+            printf "> Setting default colorscheme to ${OPTARG}...\n\n"
+            template="$tdir/${OPTARG}.txt"
+            cp $template "$rootdir/default.txt"
+            echo "New default colorscheme set"
     esac
 done
 
