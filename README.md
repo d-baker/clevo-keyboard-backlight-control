@@ -80,7 +80,5 @@ You can create your own colorschemes using the `kbsetcolor -n` command. Alternat
 
 TODO
 ====
-- Add an option to randomly generate a colorscheme when running `kbsetcolor` with an appropriate parameter.
-- Prevent `batterymon` from insisting on switching the backlight on if you want it off.
-- Make `batterymon` a state machine.
+- Add an option to randomly generate a colorscheme when running `kbsetcolor` with an appropriate parameter.(currently a WIP)
 - Any improvements to this hastily hacked-together code are welcomed.
