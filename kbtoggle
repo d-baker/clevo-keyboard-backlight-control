@@ -3,7 +3,7 @@ set -o nounset
 
 grep -q "kb_off=1" /etc/modprobe.d/clevo-xsm-wmi.conf
 backlight_off=$? # Is the backlight off or on?
-rootdir="/home/dbaker/bin/kb-utility"
+rootdir="/home/dbaker/bin/kb-utility" # TODO fix this
 tdir="$rootdir/kb-templates" # template folder
 default="easy-eyes.txt"
 
