@@ -28,12 +28,16 @@ showOptions () {
     printf "  kbsetcolor -h    View this help screen\n"
 }
 
-errorNoColorscheme() {
-    printf "Sorry, that colorscheme doesn't exist. Try one of these:\n\n"
+listColorschemes () {
     for template in $tdir/*; do
         stripped=${template%.*}
         echo ${stripped##*/}
     done
+}
+
+errorNoColorscheme() {
+    printf "Sorry, that colorscheme doesn't exist. Try one of these:\n\n"
+    listColorschemes
     exit 2
 }
 
@@ -59,33 +63,33 @@ applyColorscheme () {
 
 
 # Process options
-while getopts ":hnd:" opt; do
+while getopts ":hnld:" opt; do
     case $opt in
         n)  # Create a new colorscheme
             printf "> Creating new colorscheme...\n\n"
             printf "Available colors:\n"
-            
+
             declare -A colors
             colors=(['r']='red' ['b']='blue' ['y']='yellow' ['m']='magenta' ['c']='cyan' ['g']='green' ['w']='white')
-            
+
             for color in "${!colors[@]}"; do
                 echo "$color) ${colors[$color]}"
             done
-            
+
             printf "\n\nSelect color for keyboard section 1: "
             read color1
             while ! containsElement "$color1" ${!colors[@]}; do
                 echo "Invalid option, try again"
                 read color1
             done
-            
+
             printf "Select color for keyboard section 2: "
             read color2
             while ! containsElement "$color2" ${!colors[@]}; do
                 echo "Invalid option, try again"
                 read color2
             done
-            
+
             printf "Select color for keyboard section 3: "
             read color3
             while ! containsElement "$color3" ${!colors[@]}; do
@@ -118,7 +122,7 @@ while getopts ":hnd:" opt; do
             # Create and write to the colorscheme file
             echo "$config_string" > "$template_filename"
 
-            printf "\nApply this colorscheme now? Y/n: " 
+            printf "\nApply this colorscheme now? Y/n: "
             read usenow
             if [ "$usenow" == "n" ]; then
                 printf "\nNew colorscheme created, but not applied.\nYou can apply it later using:\nkbsetcolor $colorscheme_name\n"
@@ -138,6 +142,11 @@ while getopts ":hnd:" opt; do
             else
                 errorNoColorscheme
             fi
+            ;;
+        l)  # List color schemes
+            printf "Available color schemes:\n\n"
+            listColorschemes
+            exit 0
             ;;
         h)  # Show help
             showOptions
