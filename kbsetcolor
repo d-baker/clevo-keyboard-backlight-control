@@ -17,11 +17,20 @@ containsElement () {
 while getopts "d:" opt; do
     case $opt in
         d)
-            # TODO check if optarg is in the templates folder
-            printf "> Setting default colorscheme to ${OPTARG}...\n\n"
-            template="$tdir/${OPTARG}.txt"
-            cp $template "$rootdir/default.txt"
-            echo "New default colorscheme set"
+            # Check if requested colorscheme file exists
+            if [ -f "$tdir/${OPTARG}.txt" ]; then
+                printf "> Setting default colorscheme to ${OPTARG}...\n\n"
+                template="$tdir/${OPTARG}.txt"
+                cp $template "$rootdir/default.txt"
+                echo "New default colorscheme set"
+            else
+                printf "Sorry, that colorscheme doesn't exist. Try one of these:\n\n"
+                for template in $tdir/*; do
+                    stripped=${template%.*}
+                    echo ${stripped##*/}
+                done
+                exit
+            fi
     esac
 done
 
