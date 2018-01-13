@@ -2,7 +2,7 @@
 set -o nounset
 
 
-rootdir="/home/dbaker/bin/kb-utility" # TODO fix this
+rootdir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 tdir="$rootdir/kb-templates" # template folder
 
 # Array search function
