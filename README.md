@@ -58,6 +58,7 @@ Usage
 */2 * * * * cd <pathtoscript> && ./batterymon >> batterymon.log
 ```
 This will check your battery level every 2 minutes, and run a script to change the color of the keyboard if it's low. Any errors from attempting to run the script will be output to `batterymon.log`.
+Note: you can also run `batterymon` manually from the terminal to check your current battery level on a once-off basis.
 
 
 Advanced usage
