@@ -3,6 +3,7 @@ set -o nounset
 
 rootdir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 tdir="$rootdir/colorschemes" # template folder
+settingsdir="$rootdir/settings"
 
 # Array search function
 containsElement () {
@@ -45,10 +46,10 @@ applyColorscheme () {
     # Check if requested colorscheme file exists
     if [ -f "$tdir/$1.txt" ]; then
         printf "> Changing colors...\n"
-        cat "$tdir/$1.txt" > "$rootdir/state.txt" # Overwrite state file with chosen color scheme
+        cat "$tdir/$1.txt" > "$settingsdir/state.txt" # Overwrite state file with chosen color scheme
         echo "> Turning on keyboard backlight..."
         # Concatenate color state with ON code
-        cat "$rootdir/kb-on.txt" "$rootdir/state.txt" | sudo tee /etc/modprobe.d/clevo-xsm-wmi.conf > /dev/null
+        cat "$settingsdir/kb-on.txt" "$settingsdir/state.txt" | sudo tee /etc/modprobe.d/clevo-xsm-wmi.conf > /dev/null
         sudo modprobe -r clevo_xsm_wmi
         sudo modprobe clevo_xsm_wmi
         printf "\nKeyboard backlight turned on, color changed and state saved\n"
@@ -136,7 +137,7 @@ while getopts ":hnld:" opt; do
             if [ -f "$tdir/${OPTARG}.txt" ]; then
                 printf "> Setting default colorscheme to ${OPTARG}...\n\n"
                 template="$tdir/${OPTARG}.txt"
-                cp $template "$rootdir/default.txt"
+                cp $template "$settingsdir/default.txt"
                 echo "New default colorscheme set"
                 exit 0
             else

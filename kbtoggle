@@ -2,11 +2,12 @@
 set -o nounset
 
 rootdir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+settingsdir="$rootdir/settings"
+default="$settingsdir/default.txt" # default colorscheme
 
 grep -q "kb_off=1" /etc/modprobe.d/clevo-xsm-wmi.conf
 backlight_off=$? # Is the backlight off or on?
 
-default="$rootdir/default.txt" # default colorscheme
 
 showOptions () {
     printf "Usage:\n"
@@ -16,8 +17,8 @@ showOptions () {
 
 
 # Create state file if it doesn't exist (will be empty initially)
-if [ ! -f "$rootdir/state.txt" ]; then
-    > state.txt
+if [ ! -f "$settingsdir/state.txt" ]; then
+    > "$settingsdir/state.txt"
 fi
 
 if [ $# -eq 0 ]; then
@@ -29,12 +30,12 @@ if [ $# -eq 0 ]; then
         # Concatenate color state with ON code
         # Use a default if no existing state
 
-        if [ ! -s "$rootdir/state.txt" ]; then
+        if [ ! -s "$settingsdir/state.txt" ]; then
             echo "No existing state, falling back to default."
-            cat "$rootdir/kb-on.txt" "$default" | sudo tee /etc/modprobe.d/clevo-xsm-wmi.conf > /dev/null
+            cat "$settingsdir/kb-on.txt" "$default" | sudo tee /etc/modprobe.d/clevo-xsm-wmi.conf > /dev/null
         else
             echo "Using last set colorscheme."
-            cat "$rootdir/kb-on.txt" "$rootdir/state.txt" | sudo tee /etc/modprobe.d/clevo-xsm-wmi.conf > /dev/null
+            cat "$settingsdir/kb-on.txt" "$settingsdir/state.txt" | sudo tee /etc/modprobe.d/clevo-xsm-wmi.conf > /dev/null
         fi
 
         sudo modprobe -r clevo_xsm_wmi
@@ -42,7 +43,7 @@ if [ $# -eq 0 ]; then
         printf "\nKeyboard backlight turned on\n"
     else
         echo "> Turning off keyboard backlight..."
-        cat "$rootdir/kb-off.txt" | sudo tee /etc/modprobe.d/clevo-xsm-wmi.conf > /dev/null
+        cat "$settingsdir/kb-off.txt" | sudo tee /etc/modprobe.d/clevo-xsm-wmi.conf > /dev/null
         sudo modprobe -r clevo_xsm_wmi
         sudo modprobe clevo_xsm_wmi
         printf "\nKeyboard backlight turned off\n"
