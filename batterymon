@@ -1,35 +1,101 @@
 #! /bin/bash
 set -o nounset
 
-rootdir="/home/dbaker/bin/kb-utility"
-batterylevel=$(acpi -V | awk '/Discharging/ { print ($4 + 0) }')
-acpi -V | grep -q "Discharging"
-discharging=$?
+rootdir="/home/dbaker/bin/kb-utility" # TODO fix this
 
-# Grep command will exit with zero if it finds "discharging"
-# So this is saying...if battery is discharging (running on battery power),
-# check the battery level and set colors accordingly, otherwise load saved state
+# Create state file if it doesn't exist (will be empty initially)
+if [ ! -f "$rootdir/battery-state.txt" ]; then
+    > battery-state.txt
+fi
 
-if [ $discharging -eq 0 ] 
-then
+# States
+CHARGING=1
+DISCHARGING=2
 
-    if [ $batterylevel -le 10 ]
-    then
-        # Turn keyboard on and make it critical battery-colored
-        cat "$rootdir/kb-on.txt" "$rootdir/criticalbat.txt" | sudo tee /etc/modprobe.d/clevo-xsm-wmi.conf > /dev/null
-        sudo modprobe -r clevo_xsm_wmi
-        sudo modprobe clevo_xsm_wmi
-    elif [[ $batterylevel -le 20 ]]
-    then
-        # Turn keyboard on and make it low battery-colored
-        cat "$rootdir/kb-on.txt" "$rootdir/lowbat.txt" | sudo tee /etc/modprobe.d/clevo-xsm-wmi.conf > /dev/null
+LEVEL_NORMAL=3
+LEVEL_LOW=4
+LEVEL_CRITICAL=5
+
+ON=6
+OFF=7
+
+
+# Battery danger levels
+critical_level=10
+low_level=20
+
+state_charging=$CHARGING
+state_level=$LEVEL_NORMAL
+state_on=$ON
+
+isDischarging () {
+    batterylevel=$(acpi -V | awk '/Discharging/ { print ($4 + 0) }')
+    acpi -V | grep -q "Discharging"
+
+    # Grep command will exit with zero if it finds the string, hence this unintuitive logic
+    discharging=$?
+    return $discharging
+}
+
+isOn () {
+    batterylevel=$(acpi -V | awk '/Discharging/ { print ($4 + 0) }')
+    cat /etc/modprobe.d/clevo-xsm-wmi.conf | grep -q "kb_off=0"
+
+    # Grep command will exit with zero if it finds the string, hence this unintuitive logic
+    on=$?
+    return $on
+}
+
+
+if isDischarging; then
+    state_charging=$DISCHARGING
+else
+    state_charging=$CHARGING
+fi
+
+if [[ $batterylevel -le $critical_level ]]; then
+    state_level=$LEVEL_CRITICAL
+elif [[ $batterylevel -le $low_level ]]; then
+    state_level=$LEVEL_LOW
+else
+    state_level=$LEVEL_NORMAL
+fi
+
+if isOn; then
+    state_on=$ON
+else
+    state_on=$OFF
+fi
+
+echo $state_charging
+echo $state_level
+echo $state_on
+
+
+if [ state_on == $ON ]; then
+
+    if [ state_charging == $DISCHARGING ]; then
+
+        if [ state_level == $LEVEL_LOW ]; then
+            # Turn keyboard on and make it low battery-colored
+            cat "$rootdir/kb-on.txt" "$rootdir/lowbat.txt" | sudo tee /etc/modprobe.d/clevo-xsm-wmi.conf > /dev/null
+            sudo modprobe -r clevo_xsm_wmi
+            sudo modprobe clevo_xsm_wmi
+
+        elif [ state_level == $LEVEL_CRITICAL ]; then
+            # Turn keyboard on and make it critical battery-colored
+            cat "$rootdir/kb-on.txt" "$rootdir/criticalbat.txt" | sudo tee /etc/modprobe.d/clevo-xsm-wmi.conf > /dev/null
+            sudo modprobe -r clevo_xsm_wmi
+            sudo modprobe clevo_xsm_wmi
+        fi
+    
+    fi
+
+    if [ state_level == $NORMAL ]; then
+        # Load saved color state
+        cat "$rootdir/state.txt" | sudo tee /etc/modprobe.d/clevo-xsm-wmi.conf > /dev/null
         sudo modprobe -r clevo_xsm_wmi
         sudo modprobe clevo_xsm_wmi
     fi
 
-else
-    # Load saved color state
-    cat "$rootdir/state.txt" | sudo tee /etc/modprobe.d/clevo-xsm-wmi.conf > /dev/null
-    sudo modprobe -r clevo_xsm_wmi
-    sudo modprobe clevo_xsm_wmi
 fi
