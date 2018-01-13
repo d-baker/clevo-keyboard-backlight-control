@@ -22,6 +22,14 @@ solidColor () {
     return 1
 }
 
+showOptions () {
+    printf "Usage:\n"
+    printf "  kbsetcolor <colorscheme>    Apply an existing colorscheme\n"
+    printf "  kbsetcolor -n    Create a new colorscheme\n"
+    printf "  kbsetcolor -d <colorscheme>    Set a default colorscheme\n"
+    printf "  kbsetcolor -h    View this help screen\n"
+}
+
 applyColorscheme () {
     # Check if requested colorscheme file exists
     if [ -f "$tdir/$1.txt" ]
@@ -40,12 +48,11 @@ applyColorscheme () {
             stripped=${template%.*}
             echo ${stripped##*/}
         done
-        exit
     fi
 }
 
 # Process options
-while getopts "nd:" opt; do
+while getopts ":hnd:" opt; do
     case $opt in
         n)  # Create a new colorscheme
             printf "> Creating new colorscheme...\n\n"
@@ -101,6 +108,7 @@ while getopts "nd:" opt; do
             else
                 printf "\nNew colorscheme created, but not applied. You can apply it later using:\nkbsetcolor $colorscheme_name\n"
             fi
+            exit
             ;;
         d)  # Set a default colorscheme
             if [ -f "$tdir/${OPTARG}.txt" ]; then
@@ -114,9 +122,25 @@ while getopts "nd:" opt; do
                     stripped=${template%.*}
                     echo ${stripped##*/}
                 done
-                exit
             fi
+            exit
+            ;;
+        h)  # Show help
+            showOptions
+            exit
+            ;;
+        *)  # On getopts error...
+            showOptions
+            exit
             ;;
     esac
 done
 
+# Apply existing colorscheme or exit with help menu
+if [ $# -eq 0 ]
+then
+    showOptions
+else
+    # Argument (that isn't an option) supplied? Try and use it
+    applyColorscheme $1
+fi
