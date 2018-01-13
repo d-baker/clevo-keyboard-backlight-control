@@ -9,6 +9,13 @@ backlight_off=$? # Is the backlight off or on?
 
 default="$rootdir/default.txt" # default colorscheme
 
+showOptions () {
+    printf "Usage:\n"
+    printf "  kbtoggle    Turn backlight on or off\n"
+}
+
+
+
 # Create state file if it doesn't exist (will be empty initially)
 if [ ! -f "$rootdir/state.txt" ]
 then
