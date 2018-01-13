@@ -18,6 +18,8 @@ Dependencies
 - `gksudo` (or `kdesudo` for KDE) if you want to use a keyboard shortcut to run the script. Install with `sudo apt install gksu` or `sudo apt install kdesudo`. This is probably already installed.
 - `acpi` for the battery monitor: `sudo apt install acpi`
 
+IMPORTANT: you may need to recompile the clevo-xsm-wmi kernel module after system updates, which sometimes overwrite any changes you've made to the kernel configuration. I don't know of any way around this at the moment.
+
 Installation
 =====
 1. Download and unzip, or clone, this repo, then add the script to your path by adding the following line to `~/.bashrc`:
