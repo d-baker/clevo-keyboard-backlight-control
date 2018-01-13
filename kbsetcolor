@@ -14,10 +14,34 @@ containsElement () {
 }
 
 # Process options
-while getopts "d:" opt; do
+while getopts "nd:" opt; do
     case $opt in
-        d)
-            # Check if requested colorscheme file exists
+        n)  # Create a new colorscheme
+            printf "> Creating new colorscheme...\n\n"
+            printf "Available colors:\n"
+            
+            declare -A colors
+            colors=(['r']='red' ['b']='blue' ['y']='yellow' ['m']='magenta' ['c']='cyan' ['g']='green' ['w']='white')
+            
+            for color in "${!colors[@]}"
+            do
+                echo "$color) ${colors[$color]}"
+            done
+            
+            read -p "Select color for keyboard section 1: " color1
+            while ! containsElement $color1 ${!colors[@]}; do
+                echo "Invalid option, try again"
+                read -p "Select color for keyboard section 1: " color1
+            done
+            echo "Using $color1 for first section"
+            
+            read -p "Select color for keyboard section 2: " color2
+            echo "Using $color2 for second section"
+            
+            read -p "Select color for keyboard section 3: " color3
+            echo "Using $color3 for third section"
+            ;;
+        d)  # Set a default colorscheme
             if [ -f "$tdir/${OPTARG}.txt" ]; then
                 printf "> Setting default colorscheme to ${OPTARG}...\n\n"
                 template="$tdir/${OPTARG}.txt"
@@ -31,32 +55,7 @@ while getopts "d:" opt; do
                 done
                 exit
             fi
+            ;;
     esac
 done
 
-if [ $# -eq 0 ]
-  then
-    printf "> Creating new colorscheme...\n"
-    printf "Available colors:\n"
-    
-    declare -A colors
-    colors=(['r']='red' ['b']='blue' ['y']='yellow' ['m']='magenta' ['c']='cyan' ['g']='green' ['w']='white')
-    
-    for color in "${!colors[@]}"
-    do
-        echo "$color) ${colors[$color]}"
-    done
-    
-    read -p "Select color for keyboard section 1: " color1
-    while ! containsElement $color1 ${!colors[@]}; do
-        echo "Invalid option, try again"
-        read -p "Select color for keyboard section 1: " color1
-    done
-    echo "Using $color1 for first section"
-    
-    read -p "Select color for keyboard section 2: " color2
-    echo "Using $color2 for second section"
-    
-    read -p "Select color for keyboard section 3: " color3
-    echo "Using $color3 for third section"
-fi
