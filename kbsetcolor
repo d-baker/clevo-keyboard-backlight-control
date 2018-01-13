@@ -72,33 +72,34 @@ while getopts ":hnd:" opt; do
                 echo "$color) ${colors[$color]}"
             done
             
-            read -p "Select color for keyboard section 1: " color1
+            printf "\n\nSelect color for keyboard section 1: "
+            read color1
             while ! containsElement "$color1" ${!colors[@]}; do
                 echo "Invalid option, try again"
-                read -p "Select color for keyboard section 1: " color1
+                read color1
             done
-            printf "\nUsing $color1 for first section\n"
             
-            read -p "Select color for keyboard section 2: " color2
+            printf "Select color for keyboard section 2: "
+            read color2
             while ! containsElement "$color2" ${!colors[@]}; do
                 echo "Invalid option, try again"
-                read -p "Select color for keyboard section 2: " color1
+                read color2
             done
-            printf "\nUsing $color2 for second section\n"
             
-            read -p "Select color for keyboard section 3: " color3
+            printf "Select color for keyboard section 3: "
+            read color3
             while ! containsElement "$color3" ${!colors[@]}; do
                 echo "Invalid option, try again"
-                read -p "Select color for keyboard section 3: " color1
+                read color3
             done
-            printf "\nUsing $color3 for third section\n"
 
             config_string="options clevo_xsm_wmi kb_color=${colors[$color1]},${colors[$color2]},${colors[$color3]}"
 
-            read -p "Give this colorscheme a name (leave blank for default): " colorscheme_name
+            printf "\nGive this colorscheme a name (leave blank for default): "
+            read colorscheme_name
 
             if [[ -z "$colorscheme_name" ]]; then
-                echo "> Generating a colorscheme name..."
+                printf "\n> Generating a colorscheme name...\n"
                 colorscheme_name=$color1$color2$color3
                 # If the colorscheme is a solid color, use a more readable template filename
                 if solidColor $color1 $color2 $color3;
@@ -117,12 +118,13 @@ while getopts ":hnd:" opt; do
             # Create and write to the colorscheme file
             echo "$config_string" > "$template_filename"
 
-            read -p "Apply this colorscheme now? y/n: " usenow
-            if [ "$usenow" == "y" ]; then
-                printf "New colorscheme created and applied. Colorscheme name: $colorscheme_name\n\n"
-                applyColorscheme "$colorscheme_name"
+            printf "\nApply this colorscheme now? Y/n: " 
+            read usenow
+            if [ "$usenow" == "n" ]; then
+                printf "\nNew colorscheme created, but not applied.\nYou can apply it later using:\nkbsetcolor $colorscheme_name\n"
             else
-                printf "\nNew colorscheme created, but not applied. You can apply it later using:\nkbsetcolor $colorscheme_name\n"
+                printf "\nNew colorscheme created.\n\n"
+                applyColorscheme "$colorscheme_name"
             fi
             exit 0
             ;;
