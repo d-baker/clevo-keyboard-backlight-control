@@ -5,7 +5,7 @@ grep -q "kb_off=1" /etc/modprobe.d/clevo-xsm-wmi.conf
 backlight_off=$? # Is the backlight off or on?
 rootdir="/home/dbaker/bin/kb-utility" # TODO fix this
 tdir="$rootdir/kb-templates" # template folder
-default="easy-eyes.txt"
+default="$rootdir/default.txt"
 
 if [ ! -f "$rootdir/state.txt" ]
 then
@@ -26,7 +26,7 @@ if [ $# -eq 0 ]
         if [ ! -s "$rootdir/state.txt" ]
         then
             echo "No existing state, falling back to default."
-            cat "$rootdir/kb-on.txt" "$tdir/$default" | sudo tee /etc/modprobe.d/clevo-xsm-wmi.conf > /dev/null
+            cat "$rootdir/kb-on.txt" "$default" | sudo tee /etc/modprobe.d/clevo-xsm-wmi.conf > /dev/null
         else
             echo "Using last set colorscheme."
             cat "$rootdir/kb-on.txt" "$rootdir/state.txt" | sudo tee /etc/modprobe.d/clevo-xsm-wmi.conf > /dev/null
