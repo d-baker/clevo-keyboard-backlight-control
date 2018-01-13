@@ -27,6 +27,7 @@ Installation
 2. `cd` into the clevo-keyboard-backlight-control directory and make the scripts executable:
 ```
 chmod +x kbtoggle
+chmod +x kbsetcolor
 chmod +x batterymon
 ```
 3. In order to run the `batterymon` script through cron, you need to have it in your `root` path since it has to be added to `root`s cron table. So, edit `/etc/environment` as root and append the path to the script.
@@ -38,7 +39,7 @@ This gets annoying, but you can easily disable it:
 1. `sudo visudo`, this will open the `/etc/sudoers` file in your terminal
 2. Add the following lines to the end of the file, where `<pathtoscript>` is the full path to this utility on your system:
 ```
-username ALL=(ALL) NOPASSWD: <pathtoscript>/kbtoggle,<pathtoscript>/batterymon
+username ALL=(ALL) NOPASSWD: <pathtoscript>/kbtoggle,<pathtoscript>/kbsetcolor,<pathtoscript>/batterymon
 ```
 3. Save and close the file
 
@@ -49,7 +50,9 @@ Usage
 	1. Create a custom command shortcut in your system settings (exact steps vary by distro - please google).
 	2. Specify the command as `gksudo <pathtoscript>/kbtoggle`. Replace `gksudo` with `kdesudo` if using KDE. 
 	3. Using `gksudo` or `kdesudo` will pop up a graphical interface to ask for your password when you hit your chosen keyboard shortcut. I haven't found a way to make these respect the sudoers file yet, so you'll have to give you password every time.
-- To change the colorscheme of the keyboard, from a terminal run `kbtoggle <colorscheme>` where `<colorscheme>` is the name of one the files in `kb-templates` without the `.txt` file extension.
+- To change the colorscheme of the keyboard, from a terminal run `kbsetcolor <colorscheme>` where `<colorscheme>` is the name of one the files in `kb-templates` without the `.txt` file extension. Running `kbsetcolor` without any arguments will give you a list of all the colorscheme arguments you can use.
+- To create a new colorscheme, run `kbsetcolor -n` and follow the prompts.
+- You can set a default colorscheme to use if there is no colorscheme already set: `kbsetcolor -d <colorscheme>`
 - To make the keyboard change color when the battery is low (20%) or critical (10%), run `sudo crontab -e`, add the following line (where `<pathtoscript>` is the full path to this utility on your system) and save:
 ```
 */2 * * * * cd <pathtoscript> && ./batterymon >> batterymon.log
@@ -72,10 +75,11 @@ white
 
 Most of the files in `kb-templates` are named after the initials of the 3 colors in their colorscheme. For example, `yrb` stands for `yellow, red, blue` in that order, from left to right, across the keyboard. A few schemes are solid colors (white, cyan) and some are gradients of 2 closely related colors.
 
-You can create your own colorschemes easily - just duplicate one of the existing schemes and replace the specified colors with your choice of colors from the list above. Save it with a name you'll remember so you can easily call it from the command line (you may want to rename your favorite existing schemes for the same reason!)
+You can create your own colorschemes using the `kbsetcolor -n` command. Alternatively, you can create a colorscheme manually by duplicating one of the existing schemes and replace the specified colors with your choice of colors from the list above. Save it with a name you'll remember so you can easily call it from the command line (you may want to rename your favorite existing schemes for the same reason!)
 
 TODO
 ====
-- Add an option to randomly generate a colorscheme when running `kbtoggle` with an appropriate parameter.
+- Add an option to randomly generate a colorscheme when running `kbsetcolor` with an appropriate parameter.
 - Prevent `batterymon` from insisting on switching the backlight on if you want it off.
+- Make `batterymon` a state machine.
 - Any improvements to this hastily hacked-together code are welcomed.
