@@ -82,7 +82,7 @@ if [[ state_on -eq $ON ]]; then
     
     fi
 
-    if [[ state_level -eq $NORMAL ]]; then
+    if [[ state_level -eq $LEVEL_NORMAL ]]; then
         # Load saved color state
         cat "$rootdir/state.txt" | sudo tee /etc/modprobe.d/clevo-xsm-wmi.conf > /dev/null
         sudo modprobe -r clevo_xsm_wmi
