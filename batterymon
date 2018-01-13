@@ -63,9 +63,6 @@ else
     state_on=$OFF
 fi
 
-state_charging=$CHARGING
-state_level=$LEVEL_CRITICAL
-
 printf "> Checking whether the keyboard is on...\n\n"
 # Only turn on the keyboard if we already have it set to on
 if [[ $state_on -eq $ON ]]; then
@@ -95,7 +92,8 @@ if [[ $state_on -eq $ON ]]; then
         echo "Battery level is normal."
 
         # Check if the state in kernel and state in state file differ
-        if [ -z $(diff "state.txt" "/etc/modprobe.d/clevo-xsm-wmi.conf") ]; then
+        state_diff=$(diff "state.txt" "/etc/modprobe.d/clevo-xsm-wmi.conf")
+        if [ -z "$state_diff" ]; then
             # No diff - keyboard colorscheme is up to date with saved state
             printf "\nKeyboard color is up to date\n"
         else
