@@ -108,7 +108,7 @@ while getopts ":hnd:" opt; do
                 fi
             else
                 # Replace spaces with dashes
-                colorscheme_name=${colorscheme_name/ /-}
+                colorscheme_name=${colorscheme_name// /-}
             fi
 
             echo "Colorscheme name: $colorscheme_name"
