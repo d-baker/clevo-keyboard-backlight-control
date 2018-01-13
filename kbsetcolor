@@ -13,6 +13,15 @@ containsElement () {
   return 1
 }
 
+# Check if new colorscheme is a solid color
+solidColor () {
+    if [ "$1" == "$2" -a "$2" == "$3" ];
+    then
+        return 0
+    fi
+    return 1
+}
+
 # Process options
 while getopts "nd:" opt; do
     case $opt in
@@ -29,17 +38,45 @@ while getopts "nd:" opt; do
             done
             
             read -p "Select color for keyboard section 1: " color1
-            while ! containsElement $color1 ${!colors[@]}; do
+            while ! containsElement "$color1" ${!colors[@]}; do
                 echo "Invalid option, try again"
                 read -p "Select color for keyboard section 1: " color1
             done
-            echo "Using $color1 for first section"
+            printf "\nUsing $color1 for first section\n"
             
             read -p "Select color for keyboard section 2: " color2
-            echo "Using $color2 for second section"
+            while ! containsElement "$color2" ${!colors[@]}; do
+                echo "Invalid option, try again"
+                read -p "Select color for keyboard section 2: " color1
+            done
+            printf "\nUsing $color2 for second section\n"
             
             read -p "Select color for keyboard section 3: " color3
-            echo "Using $color3 for third section"
+            while ! containsElement "$color3" ${!colors[@]}; do
+                echo "Invalid option, try again"
+                read -p "Select color for keyboard section 3: " color1
+            done
+            printf "\nUsing $color3 for third section\n"
+
+            config_string="options clevo_xsm_wmi kb_color=${colors[$color1]},${colors[$color2]},${colors[$color3]}"
+
+            colorscheme_name=$color1$color2$color3
+            # If the colorscheme is a solid color, use a more readable template filename
+            if solidColor $color1 $color2 $color3;
+            then
+                colorscheme_name=${colors[$color1]}
+            fi
+            template_filename="$tdir/$colorscheme_name.txt"
+
+            # Create and write to the colorscheme file
+            echo "$config_string" > "$template_filename"
+
+            read -p "Apply this colorscheme now? y/n: " usenow
+            if [ "$usenow" == "y" ]; then
+                echo "New colorscheme created and applied. Colorscheme name: $colorscheme_name"
+            else
+                printf "\nNew colorscheme created, but not applied. You can apply it later using:\nkbsetcolor $colorscheme_name\n"
+            fi
             ;;
         d)  # Set a default colorscheme
             if [ -f "$tdir/${OPTARG}.txt" ]; then
