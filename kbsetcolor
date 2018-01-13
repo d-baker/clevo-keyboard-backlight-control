@@ -82,6 +82,7 @@ while getopts "nd:" opt; do
 
             config_string="options clevo_xsm_wmi kb_color=${colors[$color1]},${colors[$color2]},${colors[$color3]}"
 
+            # TODO allow user to specify name
             colorscheme_name=$color1$color2$color3
             # If the colorscheme is a solid color, use a more readable template filename
             if solidColor $color1 $color2 $color3;
