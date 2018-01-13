@@ -22,6 +22,28 @@ solidColor () {
     return 1
 }
 
+applyColorscheme () {
+    # Check if requested colorscheme file exists
+    if [ -f "$tdir/$1.txt" ]
+    then
+        printf "> Changing colors...\n"
+        cat "$tdir/$1.txt" > "$rootdir/state.txt" # Overwrite state file with chosen color scheme
+        echo "> Turning on keyboard backlight..."
+        # Concatenate color state with ON code
+        cat "$rootdir/kb-on.txt" "$rootdir/state.txt" | sudo tee /etc/modprobe.d/clevo-xsm-wmi.conf > /dev/null
+        sudo modprobe -r clevo_xsm_wmi
+        sudo modprobe clevo_xsm_wmi
+        printf "\nKeyboard backlight turned on, color changed and state saved\n"
+    else
+        printf "Sorry, that colorscheme doesn't exist. Try one of these:\n\n"
+        for template in $tdir/*; do
+            stripped=${template%.*}
+            echo ${stripped##*/}
+        done
+        exit
+    fi
+}
+
 # Process options
 while getopts "nd:" opt; do
     case $opt in
@@ -73,7 +95,8 @@ while getopts "nd:" opt; do
 
             read -p "Apply this colorscheme now? y/n: " usenow
             if [ "$usenow" == "y" ]; then
-                echo "New colorscheme created and applied. Colorscheme name: $colorscheme_name"
+                printf "New colorscheme created and applied. Colorscheme name: $colorscheme_name\n\n"
+                applyColorscheme $colorscheme_name
             else
                 printf "\nNew colorscheme created, but not applied. You can apply it later using:\nkbsetcolor $colorscheme_name\n"
             fi
