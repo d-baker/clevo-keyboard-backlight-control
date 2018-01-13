@@ -30,6 +30,15 @@ showOptions () {
     printf "  kbsetcolor -h    View this help screen\n"
 }
 
+errorNoColorscheme() {
+    printf "Sorry, that colorscheme doesn't exist. Try one of these:\n\n"
+    for template in $tdir/*; do
+        stripped=${template%.*}
+        echo ${stripped##*/}
+    done
+    exit 2
+}
+
 applyColorscheme () {
     # Check if requested colorscheme file exists
     if [ -f "$tdir/$1.txt" ]
@@ -44,12 +53,7 @@ applyColorscheme () {
         printf "\nKeyboard backlight turned on, color changed and state saved\n"
         exit 0
     else
-        printf "Sorry, that colorscheme doesn't exist. Try one of these:\n\n"
-        for template in $tdir/*; do
-            stripped=${template%.*}
-            echo ${stripped##*/}
-        done
-        exit 2
+        errorNoColorscheme
     fi
 }
 
@@ -91,13 +95,23 @@ while getopts ":hnd:" opt; do
 
             config_string="options clevo_xsm_wmi kb_color=${colors[$color1]},${colors[$color2]},${colors[$color3]}"
 
-            # TODO allow user to specify name
-            colorscheme_name=$color1$color2$color3
-            # If the colorscheme is a solid color, use a more readable template filename
-            if solidColor $color1 $color2 $color3;
-            then
-                colorscheme_name=${colors[$color1]}
+            read -p "Give this colorscheme a name (leave blank for default): " colorscheme_name
+
+            if [[ -z "$colorscheme_name" ]]; then
+                echo "> Generating a colorscheme name..."
+                colorscheme_name=$color1$color2$color3
+                # If the colorscheme is a solid color, use a more readable template filename
+                if solidColor $color1 $color2 $color3;
+                then
+                    colorscheme_name=${colors[$color1]}
+                fi
+            else
+                # Replace spaces with dashes
+                colorscheme_name=${colorscheme_name/ /-}
             fi
+
+            echo "Colorscheme name: $colorscheme_name"
+
             template_filename="$tdir/$colorscheme_name.txt"
 
             # Create and write to the colorscheme file
@@ -106,7 +120,7 @@ while getopts ":hnd:" opt; do
             read -p "Apply this colorscheme now? y/n: " usenow
             if [ "$usenow" == "y" ]; then
                 printf "New colorscheme created and applied. Colorscheme name: $colorscheme_name\n\n"
-                applyColorscheme $colorscheme_name
+                applyColorscheme "$colorscheme_name"
             else
                 printf "\nNew colorscheme created, but not applied. You can apply it later using:\nkbsetcolor $colorscheme_name\n"
             fi
@@ -118,14 +132,10 @@ while getopts ":hnd:" opt; do
                 template="$tdir/${OPTARG}.txt"
                 cp $template "$rootdir/default.txt"
                 echo "New default colorscheme set"
+                exit 0
             else
-                printf "Sorry, that colorscheme doesn't exist. Try one of these:\n\n"
-                for template in $tdir/*; do
-                    stripped=${template%.*}
-                    echo ${stripped##*/}
-                done
+                errorNoColorscheme
             fi
-            exit 0
             ;;
         h)  # Show help
             showOptions
@@ -145,5 +155,5 @@ then
     exit 2
 else
     # Argument (that isn't an option) supplied? Try and use it
-    applyColorscheme $1
+    applyColorscheme "$1"
 fi
