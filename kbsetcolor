@@ -79,21 +79,21 @@ while getopts ":hnld:" opt; do
             printf "\n\nSelect color for keyboard section 1: "
             read color1
             while ! containsElement "$color1" ${!colors[@]}; do
-                echo "Invalid option, try again"
+                printf "Invalid option, try again: "
                 read color1
             done
 
             printf "Select color for keyboard section 2: "
             read color2
             while ! containsElement "$color2" ${!colors[@]}; do
-                echo "Invalid option, try again"
+                printf "Invalid option, try again: "
                 read color2
             done
 
             printf "Select color for keyboard section 3: "
             read color3
             while ! containsElement "$color3" ${!colors[@]}; do
-                echo "Invalid option, try again"
+                printf "Invalid option, try again: "
                 read color3
             done
 
