@@ -3,11 +3,6 @@ set -o nounset
 
 rootdir="/home/dbaker/bin/kb-utility" # TODO fix this
 
-# Create state file if it doesn't exist (will be empty initially)
-if [ ! -f "$rootdir/battery-state.txt" ]; then
-    > battery-state.txt
-fi
-
 # States
 CHARGING=1
 DISCHARGING=2
@@ -67,23 +62,19 @@ else
     state_on=$OFF
 fi
 
-echo $state_charging
-echo $state_level
-echo $state_on
+# Only turn on the keyboard if we already have it set to on
+if [ state_on -eq $ON ]; then
 
+    if [ state_charging -eq $DISCHARGING ]; then
 
-if [ state_on == $ON ]; then
-
-    if [ state_charging == $DISCHARGING ]; then
-
-        if [ state_level == $LEVEL_LOW ]; then
-            # Turn keyboard on and make it low battery-colored
+        if [ state_level -eq $LEVEL_LOW ]; then
+            # Make keyboard low battery-colored
             cat "$rootdir/kb-on.txt" "$rootdir/lowbat.txt" | sudo tee /etc/modprobe.d/clevo-xsm-wmi.conf > /dev/null
             sudo modprobe -r clevo_xsm_wmi
             sudo modprobe clevo_xsm_wmi
 
-        elif [ state_level == $LEVEL_CRITICAL ]; then
-            # Turn keyboard on and make it critical battery-colored
+        elif [ state_level -eq $LEVEL_CRITICAL ]; then
+            # Make keyboard critical battery-colored
             cat "$rootdir/kb-on.txt" "$rootdir/criticalbat.txt" | sudo tee /etc/modprobe.d/clevo-xsm-wmi.conf > /dev/null
             sudo modprobe -r clevo_xsm_wmi
             sudo modprobe clevo_xsm_wmi
@@ -91,7 +82,7 @@ if [ state_on == $ON ]; then
     
     fi
 
-    if [ state_level == $NORMAL ]; then
+    if [ state_level -eq $NORMAL ]; then
         # Load saved color state
         cat "$rootdir/state.txt" | sudo tee /etc/modprobe.d/clevo-xsm-wmi.conf > /dev/null
         sudo modprobe -r clevo_xsm_wmi
