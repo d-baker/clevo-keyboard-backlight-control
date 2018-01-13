@@ -34,11 +34,11 @@ isDischarging () {
 
 isOn () {
     batterylevel=$(acpi -V | awk '/Discharging/ { print ($4 + 0) }')
-    cat /etc/modprobe.d/clevo-xsm-wmi.conf | grep -q "kb_off=0"
+    cat /etc/modprobe.d/clevo-xsm-wmi.conf | grep -q "kb_off=1"
 
     # Grep command will exit with zero if it finds the string, hence this unintuitive logic
-    on=$?
-    return $on
+    off=$?
+    if [[ off -eq 0 ]]; then return 1; else return 0; fi
 }
 
 
@@ -62,18 +62,22 @@ else
     state_on=$OFF
 fi
 
+printf "> Checking whether the keyboard is on...\n\n"
 # Only turn on the keyboard if we already have it set to on
 if [[ state_on -eq $ON ]]; then
 
     if [[ state_charging -eq $DISCHARGING ]]; then
+        printf "Battery is discharging. "
 
         if [[ state_level -eq $LEVEL_LOW ]]; then
+            echo "Battery level is low."
             # Make keyboard low battery-colored
             cat "$rootdir/kb-on.txt" "$rootdir/lowbat.txt" | sudo tee /etc/modprobe.d/clevo-xsm-wmi.conf > /dev/null
             sudo modprobe -r clevo_xsm_wmi
             sudo modprobe clevo_xsm_wmi
 
         elif [[ state_level -eq $LEVEL_CRITICAL ]]; then
+            echo "Battery level is critical."
             # Make keyboard critical battery-colored
             cat "$rootdir/kb-on.txt" "$rootdir/criticalbat.txt" | sudo tee /etc/modprobe.d/clevo-xsm-wmi.conf > /dev/null
             sudo modprobe -r clevo_xsm_wmi
@@ -83,10 +87,24 @@ if [[ state_on -eq $ON ]]; then
     fi
 
     if [[ state_level -eq $LEVEL_NORMAL ]]; then
-        # Load saved color state
-        cat "$rootdir/state.txt" | sudo tee /etc/modprobe.d/clevo-xsm-wmi.conf > /dev/null
-        sudo modprobe -r clevo_xsm_wmi
-        sudo modprobe clevo_xsm_wmi
-    fi
+        echo "Battery level is normal."
 
+        # Check if the state in kernel and state in state file differ
+        if [ -z $(diff "state.txt" "/etc/modprobe.d/clevo-xsm-wmi.conf") ]; then
+            # No diff - keyboard colorscheme is up to date with saved state
+            echo "Keyboard color is up to date"
+        else
+            # Keyboard needs updating to match saved state
+            printf "\nReturning keyboard to its saved color state\n"
+
+            # Load saved color state
+            cat "$rootdir/state.txt" | sudo tee /etc/modprobe.d/clevo-xsm-wmi.conf > /dev/null
+            sudo modprobe -r clevo_xsm_wmi
+            sudo modprobe clevo_xsm_wmi
+        fi
+
+
+    fi
+else
+    echo "Keyboard backlight off. Not changing anything"
 fi
