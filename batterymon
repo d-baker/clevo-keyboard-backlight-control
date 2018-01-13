@@ -19,6 +19,7 @@ OFF=7
 critical_level=10
 low_level=20
 
+# Default values
 state_charging=$CHARGING
 state_level=$LEVEL_NORMAL
 state_on=$ON
