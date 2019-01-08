@@ -50,10 +50,15 @@ applyColorscheme () {
         cat "$tdir/$1.txt" > "$settingsdir/state.txt" # Overwrite state file with chosen color scheme
         echo "> Turning on keyboard backlight..."
         cat "$settingsdir/state.txt" | sudo tee /etc/modprobe.d/tuxedo_keyboard.conf > /dev/null
-        sudo modprobe -r tuxedo_keyboard
-        sudo modprobe tuxedo_keyboard
-        printf "\nKeyboard backlight turned on, color changed and state saved\n"
-        exit 0
+        sudo modprobe -r tuxedo_keyboard > /dev/null 2>&1
+        sudo modprobe tuxedo_keyboard > /dev/null 2>&1
+        if [ $? -eq 0 ]; then
+            printf "\nKeyboard backlight turned on, color changed and state saved\n"
+            exit 0
+        else
+            printf "\nFailed to reload 'tuxedo_keyboard' module with config string: "
+            cat "$settingsdir/state.txt"
+        fi
     else
         errorNoColorscheme
     fi
