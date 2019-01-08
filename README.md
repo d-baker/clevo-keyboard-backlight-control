@@ -1,7 +1,7 @@
 What is this?
 =============
 
-A command-line frontend for [clevo-xsm-wmi](https://bitbucket.org/tuxedocomputers/clevo-xsm-wmi), the kernel module for controlling the backlight on Clevo laptops. In simpler terms, it lets you switch the backlight on and off, and set the colors on RGB keyboards. I created this on an Ubuntu-based Linux distro and can't guarantee it will work on other distros.
+A command-line frontend for [tuxedo_keyboard](https://github.com/tuxedocomputers/tuxedo-keyboard), the kernel module for controlling the backlight on Clevo laptops. In simpler terms, it lets you switch the backlight on and off, and set the colors on RGB keyboards. I created this on an Ubuntu-based Linux distro and can't guarantee it will work on other distros.
 
 Dependencies
 ============
@@ -51,23 +51,19 @@ Note: you can also run `batterymon` manually from the terminal to check your cur
 
 Advanced usage
 ==============
-The keyboard has 3 sections which can be independantly colored. The kernel module supports the following predefined colors:
+The keyboard has 3 sections which can be independantly colored: `color_left`, `color_center`, and `color_right`. You can use any hex values formatted `0x123456` here, but be warned that the actual colors your keyboard is capable of may be limited and you might get unexpected results. The following work reliably on my machine:
 ```
-red
-yellow
-green
-cyan
-blue
-magenta
-white
+Red: 0xFF0000
+Green: 0x00FF00
+Blue: 0x0000FF
+Cyan: 0x00FFFF
+Magenta: 0xFF00FF
+Yellow: 0xFFFF00
+Orange: 0xFF6600
+White: 0xFFFFFF
+Black (backlight off): 0x000000
 ```
 
 Most of the files in `kb-templates` are named after the initials of the 3 colors in their colorscheme. For example, `yrb` stands for `yellow, red, blue` in that order, from left to right, across the keyboard. A few schemes are solid colors (white, cyan) and some are gradients of 2 closely related colors.
 
 You can create your own colorschemes using the `kbsetcolor -n` command. Alternatively, you can create a colorscheme manually by duplicating one of the existing schemes and replace the specified colors with your choice of colors from the list above. Save it with a name you'll remember so you can easily call it from the command line (you may want to rename your favorite existing schemes for the same reason!)
-
-TODO
-====
-- Maintain brightness set by hardware
-- Add an option to randomly generate a colorscheme when running `kbsetcolor` with an appropriate parameter.(currently a WIP)
-- Any improvements to this hastily hacked-together code are welcomed.
