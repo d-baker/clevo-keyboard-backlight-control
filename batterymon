@@ -35,7 +35,7 @@ isDischarging () {
 
 isOn () {
     batterylevel=$(acpi -V | awk '/Discharging/ { print ($4 + 0) }')
-    cat /etc/modprobe.d/clevo-xsm-wmi.conf | grep -q "kb_off=1"
+    cat /etc/modprobe.d/tuxedo_keyboard.conf | grep -q "kb_off=1"
 
     # Grep command will exit with zero if it finds the string, hence this unintuitive logic
     off=$?
@@ -73,16 +73,16 @@ if [[ $state_on -eq $ON ]]; then
         if [[ $state_level -eq $LEVEL_LOW ]]; then
             echo "Battery level is low."
             # Make keyboard low battery-colored
-            cat "$rootdir/kb-on.txt" "$rootdir/lowbat.txt" | sudo tee /etc/modprobe.d/clevo-xsm-wmi.conf > /dev/null
-            sudo modprobe -r clevo_xsm_wmi
-            sudo modprobe clevo_xsm_wmi
+            cat "$rootdir/kb-on.txt" "$rootdir/lowbat.txt" | sudo tee /etc/modprobe.d/tuxedo_keyboard.conf > /dev/null
+            sudo modprobe -r tuxedo_keyboard
+            sudo modprobe tuxedo_keyboard
 
         elif [[ $state_level -eq $LEVEL_CRITICAL ]]; then
             echo "Battery level is critical."
             # Make keyboard critical battery-colored
-            cat "$rootdir/kb-on.txt" "$rootdir/criticalbat.txt" | sudo tee /etc/modprobe.d/clevo-xsm-wmi.conf > /dev/null
-            sudo modprobe -r clevo_xsm_wmi
-            sudo modprobe clevo_xsm_wmi
+            cat "$rootdir/kb-on.txt" "$rootdir/criticalbat.txt" | sudo tee /etc/modprobe.d/tuxedo_keyboard.conf > /dev/null
+            sudo modprobe -r tuxedo_keyboard
+            sudo modprobe tuxedo_keyboard
         fi
     else
        printf "Battery charging. " 
@@ -92,7 +92,7 @@ if [[ $state_on -eq $ON ]]; then
         echo "Battery level is normal."
 
         # Check if the state in kernel and state in state file differ
-        state_diff=$(diff "state.txt" "/etc/modprobe.d/clevo-xsm-wmi.conf")
+        state_diff=$(diff "state.txt" "/etc/modprobe.d/tuxedo_keyboard.conf")
         if [ -z "$state_diff" ]; then
             # No diff - keyboard colorscheme is up to date with saved state
             printf "\nKeyboard color is up to date\n"
@@ -101,9 +101,9 @@ if [[ $state_on -eq $ON ]]; then
             printf "\nReturning keyboard to its saved color state\n"
 
             # Load saved color state
-            cat "$rootdir/state.txt" | sudo tee /etc/modprobe.d/clevo-xsm-wmi.conf > /dev/null
-            sudo modprobe -r clevo_xsm_wmi
-            sudo modprobe clevo_xsm_wmi
+            cat "$rootdir/state.txt" | sudo tee /etc/modprobe.d/tuxedo_keyboard.conf > /dev/null
+            sudo modprobe -r tuxedo_keyboard
+            sudo modprobe tuxedo_keyboard
         fi
 
 

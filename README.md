@@ -5,20 +5,8 @@ A command-line frontend for [clevo-xsm-wmi](https://bitbucket.org/tuxedocomputer
 
 Dependencies
 ============
-- `clevo-xsm-wmi`
-	1. [Download it here](https://bitbucket.org/tuxedocomputers/clevo-xsm-wmi)
-	2. Install dependencies: `sudo apt install gcc make linux-headers-generic`
-	3. Open a terminal, enter the clevo-xsm-wmi directory and run `cd module && make && sudo make install`
-	4. Just in case: 
-		```
-		sudo install -m644 clevo-xsm-wmi.ko /lib/modules/$(uname -r)/extra
-		sudo depmod
-		sudo tee /etc/modules-load.d/clevo-xsm-wmi.conf <<< clevo-xsm-wmi
-		```
-- `gksudo` (or `kdesudo` for KDE) if you want to use a keyboard shortcut to run the script. Install with `sudo apt install gksu` or `sudo apt install kdesudo`. This is probably already installed.
-- `acpi` for the battery monitor: `sudo apt install acpi`
-
-IMPORTANT: you may need to recompile the clevo-xsm-wmi kernel module after system updates, which sometimes overwrite any changes you've made to the kernel configuration. I don't know of any way around this at the moment.
+- `tuxedo-keyboard`
+[Download it here](https://github.com/tuxedocomputers/tuxedo-keyboard) and follow installation instructions
 
 Installation
 =====

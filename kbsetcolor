@@ -49,10 +49,9 @@ applyColorscheme () {
         printf "> Changing colors...\n"
         cat "$tdir/$1.txt" > "$settingsdir/state.txt" # Overwrite state file with chosen color scheme
         echo "> Turning on keyboard backlight..."
-        # Concatenate color state with ON code
-        cat "$settingsdir/kb-on.txt" "$settingsdir/state.txt" | sudo tee /etc/modprobe.d/clevo-xsm-wmi.conf > /dev/null
-        sudo modprobe -r clevo_xsm_wmi
-        sudo modprobe clevo_xsm_wmi
+        cat "$settingsdir/state.txt" | sudo tee /etc/modprobe.d/tuxedo_keyboard.conf > /dev/null
+        sudo modprobe -r tuxedo_keyboard
+        sudo modprobe tuxedo_keyboard
         printf "\nKeyboard backlight turned on, color changed and state saved\n"
         exit 0
     else
@@ -99,7 +98,7 @@ while getopts ":hnld:" opt; do
                 read color3
             done
 
-            config_string="options clevo_xsm_wmi kb_color=${colors[$color1]},${colors[$color2]},${colors[$color3]}"
+            config_string="options tuxedo_keyboard color_left=${colors[$color1]} color_center=${colors[$color2]},${colors[$color3]}"
 
             printf "\nGive this colorscheme a name (leave blank for default): "
             read colorscheme_name

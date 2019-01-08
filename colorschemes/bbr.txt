@@ -1,1 +1,1 @@
-options clevo_xsm_wmi kb_color=blue,blue,red
+options tuxedo_keyboard color_left=0x0000FF color_center=0x0000FF color_right=0xFF0000

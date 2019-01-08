@@ -5,7 +5,7 @@ rootdir="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 settingsdir="$rootdir/settings"
 default="$settingsdir/default.txt" # default colorscheme
 
-grep -q "kb_off=1" /etc/modprobe.d/clevo-xsm-wmi.conf
+grep -q "color_left=0x000000 color_center=0x000000 color_right=0x000000" /etc/modprobe.d/tuxedo_keyboard.conf
 backlight_off=$? # Is the backlight off or on?
 
 
@@ -32,20 +32,20 @@ if [ $# -eq 0 ]; then
 
         if [ ! -s "$settingsdir/state.txt" ]; then
             echo "No existing state, falling back to default."
-            cat "$settingsdir/kb-on.txt" "$default" | sudo tee /etc/modprobe.d/clevo-xsm-wmi.conf > /dev/null
+            cat "$default" | sudo tee /etc/modprobe.d/tuxedo_keyboard.conf > /dev/null
         else
             echo "Using last set colorscheme."
-            cat "$settingsdir/kb-on.txt" "$settingsdir/state.txt" | sudo tee /etc/modprobe.d/clevo-xsm-wmi.conf > /dev/null
+            cat "$settingsdir/state.txt" | sudo tee /etc/modprobe.d/tuxedo_keyboard.conf > /dev/null
         fi
 
-        sudo modprobe -r clevo_xsm_wmi
-        sudo modprobe clevo_xsm_wmi
+        sudo modprobe -r tuxedo_keyboard
+        sudo modprobe tuxedo_keyboard
         printf "\nKeyboard backlight turned on\n"
     else
         echo "> Turning off keyboard backlight..."
-        cat "$settingsdir/kb-off.txt" | sudo tee /etc/modprobe.d/clevo-xsm-wmi.conf > /dev/null
-        sudo modprobe -r clevo_xsm_wmi
-        sudo modprobe clevo_xsm_wmi
+        cat "$settingsdir/kb-off.txt" | sudo tee /etc/modprobe.d/tuxedo_keyboard.conf > /dev/null
+        sudo modprobe -r tuxedo_keyboard
+        sudo modprobe tuxedo_keyboard
         printf "\nKeyboard backlight turned off\n"
     fi
     exit 0
